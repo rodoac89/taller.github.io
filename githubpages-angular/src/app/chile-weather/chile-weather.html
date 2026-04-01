@@ -1,0 +1,60 @@
+<div class="weather-container">
+  <header class="header">
+    <div class="header-content">
+      <h1>🇨🇱 Clima en Chile</h1>
+      <p class="subtitle">Condiciones meteorológicas actuales</p>
+      @if (lastUpdated()) {
+        <p class="last-updated">
+          Última actualización: {{ lastUpdated()!.toLocaleTimeString('es-CL') }}
+          <button class="refresh-btn" (click)="fetchWeather()" [disabled]="loading()">↻</button>
+        </p>
+      }
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Cargando datos meteorológicos...</p>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="error">
+      <p>{{ error() }}</p>
+      <button class="retry-btn" (click)="fetchWeather()">Reintentar</button>
+    </div>
+  }
+
+  @if (!loading() && !error()) {
+    <div class="cities-grid">
+      @for (city of cities(); track city.name) {
+        <div class="city-card" [class.night]="!city.isDay">
+          <div class="card-header">
+            <span class="weather-icon">{{ city.weatherIcon }}</span>
+            <div class="temp">{{ city.temperature }}°C</div>
+          </div>
+          <div class="card-body">
+            <h2 class="city-name">{{ city.name }}</h2>
+            <p class="city-region">{{ city.region }}</p>
+            <p class="weather-desc">{{ city.weatherDescription }}</p>
+            <div class="details">
+              <div class="detail">
+                <span class="detail-icon">💧</span>
+                <span>{{ city.humidity }}%</span>
+              </div>
+              <div class="detail">
+                <span class="detail-icon">💨</span>
+                <span>{{ city.windSpeed }} km/h</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <footer class="footer">
+    <p>Datos proporcionados por <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></p>
+  </footer>
+</div>
